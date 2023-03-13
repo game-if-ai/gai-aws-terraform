@@ -142,3 +142,20 @@ module "cdn_static_assets" {
 #   versioning_enabled     = true # test backup
 #   web_acl_id             = module.cdn_firewall.wafv2_webacl_arn
 }
+
+resource "aws_ssm_parameter" "cdn_id" {
+  name     = "/${var.eb_env_name}/CLOUDFRONT_DISTRIBUTION_ID"
+  type     = "String"
+  value    = module.cdn_static_assets.cf_id
+  provider = aws.us-east-1
+  tags     = var.eb_env_tags
+}
+
+resource "aws_ssm_parameter" "cdn_s3_websites_name" {
+  name        = "/${var.eb_env_name}/s3-websites/NAME"
+  description = "Bucket that stores frontend apps"
+  type        = "String"
+  value       = module.cdn_static_assets.s3_bucket
+  provider    = aws.us-east-1
+  tags        = var.eb_env_tags
+}

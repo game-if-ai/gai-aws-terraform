@@ -33,3 +33,9 @@ variable "eb_env_stage" {
   description = "Stage, e.g. 'prod', 'staging', 'dev', or 'test'"
   default     = "dev"
 }
+
+variable "eb_env_tags" {
+  type        = map(string)
+  default     = {}
+  description = "Additional tags (e.g. `map('BusinessUnit`,`XYZ`)"
+}
