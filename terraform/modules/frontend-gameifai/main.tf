@@ -138,13 +138,12 @@ module "cdn_static_assets" {
   # this are artifacts generated from github code, no need to version them:
   viewer_protocol_policy = "redirect-to-https"
     stage       = var.eb_env_stage
-
 #   versioning_enabled     = true # test backup
 #   web_acl_id             = module.cdn_firewall.wafv2_webacl_arn
 }
 
 resource "aws_ssm_parameter" "cdn_id" {
-  name     = "/${var.eb_env_name}/CLOUDFRONT_DISTRIBUTION_ID"
+  name     = "/${var.eb_env_name}/${var.eb_env_stage}/CLOUDFRONT_DISTRIBUTION_ID"
   type     = "String"
   value    = module.cdn_static_assets.cf_id
   provider = aws.us-east-1
@@ -152,7 +151,7 @@ resource "aws_ssm_parameter" "cdn_id" {
 }
 
 resource "aws_ssm_parameter" "cdn_s3_websites_name" {
-  name        = "/${var.eb_env_name}/s3-websites/NAME"
+  name        = "/${var.eb_env_name}/${var.eb_env_stage}/s3-websites/NAME"
   description = "Bucket that stores frontend apps"
   type        = "String"
   value       = module.cdn_static_assets.s3_bucket
