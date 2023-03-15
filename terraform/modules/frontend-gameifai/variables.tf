@@ -3,9 +3,9 @@ variable "eb_env_namespace" {
   description = "Namespace, which could be your organization name, e.g. 'eg' or 'cp'"
 }
 
-variable "aws_acm_certificate_domain" {
+variable "aws_acm_certificate_arn" {
   type        = string
-  description = "domain name to find ssl certificate"
+  description = "arn for ssl certificate"
 }
 
 variable "site_domain_name" {

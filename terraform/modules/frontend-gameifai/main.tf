@@ -4,16 +4,6 @@ provider "aws" {
   alias  = "us-east-1"
 }
 
-###
-# Find a certificate for our domain that has status ISSUED
-# NOTE that for now, this infra depends on managing certs INSIDE AWS/ACM
-###
-data "aws_acm_certificate" "cdn" {
-  provider = aws.us-east-1
-  domain   = var.aws_acm_certificate_domain
-  statuses = ["ISSUED"]
-}
-
 locals {
   namespace = "${var.eb_env_namespace}-${var.eb_env_stage}"
 
@@ -71,7 +61,7 @@ resource "aws_cloudfront_function" "cf_fn_origin_root" {
 # fronts just an s3 bucket with static assets (javascript, css, ...) for frontend apps hosting
 module "cdn_static_assets" {
   source                             = "git::https://github.com/cloudposse/terraform-aws-cloudfront-s3-cdn.git?ref=tags/0.82.4"
-  acm_certificate_arn                = data.aws_acm_certificate.cdn.arn
+  acm_certificate_arn                = var.aws_acm_certificate_arn
   aliases                            = local.static_page_asset_aliases
   allowed_methods                    = ["HEAD", "DELETE", "POST", "GET", "OPTIONS", "PUT", "PATCH"]
   block_origin_public_access_enabled = true # so only CDN can access it

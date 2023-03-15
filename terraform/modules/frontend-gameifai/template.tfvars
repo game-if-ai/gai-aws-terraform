@@ -1,0 +1,1 @@
+aws_acm_certificate_arn="arn:aws:acm:us-east-1:<acc_num>:certificate/<uuid>"

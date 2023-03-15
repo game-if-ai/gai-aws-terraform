@@ -1,5 +1,5 @@
 terraform {
-  source = "${path_relative_from_include()}/modules//frontend"
+  source = "${path_relative_from_include()}/modules//frontend-gameifai"
 }
 
 include {

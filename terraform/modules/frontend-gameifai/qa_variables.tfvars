@@ -1,6 +1,3 @@
-# must be in AWS certificate manager:
-aws_acm_certificate_domain = "gameifai.org"
-
 # e.g. us-east-1
 aws_region = "us-east-1"
 
