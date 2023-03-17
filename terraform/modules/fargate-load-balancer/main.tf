@@ -8,6 +8,7 @@ resource "aws_lb_target_group" "jupyter_api" {
   health_check {
     enabled = true
     path    = "/api/jupyter/lab"
+    matcher = "200,302"
   }
 
   depends_on = [aws_alb.jupyter_api]
@@ -52,7 +53,7 @@ resource "aws_alb_listener" "jupyter_api_https" {
   load_balancer_arn = aws_alb.jupyter_api.arn
   port              = "443"
   protocol          = "HTTPS"
-  certificate_arn   = aws_acm_certificate.jupyter_api.arn
+  certificate_arn   = "arn:aws:acm:us-east-1:621646083911:certificate/b88313b3-4978-4a30-8b6a-485f4f43df03"
 
   default_action {
     type             = "forward"
@@ -60,11 +61,10 @@ resource "aws_alb_listener" "jupyter_api_https" {
   }
 }
 
-resource "aws_acm_certificate" "jupyter_api" {
-  domain_name       = "jupyter-api.gameifai.org"
-  validation_method = "DNS"
-}
-
 output "alb_url" {
   value = "http://${aws_alb.jupyter_api.dns_name}"
+}
+
+output "alb_arn" {
+  value = aws_alb.jupyter_api.arn
 }
