@@ -58,7 +58,7 @@ TASK_DEFINITION
     name = "jupyter-notebooks-volume"
     efs_volume_configuration {
       file_system_id = module.efs.id 
-      root_directory = "./"
+      root_directory = "/"
     }
   }
 }
