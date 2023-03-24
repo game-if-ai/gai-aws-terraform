@@ -7,8 +7,8 @@ resource "aws_ecs_task_definition" "backend-task" {
   task_role_arn            = aws_iam_role.ecs_task_role.arn
   network_mode             = "awsvpc"
   cpu                      = "1024"
-  memory                   = "2048"
-
+  memory                   = "2048"  
+  
   container_definitions = <<TASK_DEFINITION
 [
   {
@@ -31,7 +31,14 @@ resource "aws_ecs_task_definition" "backend-task" {
                "hostPort": 8686,
                "protocol": "tcp"
             }
-         ]    
+         ],
+    "mountPoints": [
+            {
+              "containerPath": "/app/dev/notebooks",
+              "readOnly": false,
+              "sourceVolume": "jupyter-notebooks-volume"
+            }
+        ],    
     "environment": [
       {
         "name": "SOME_ENV_VAR",
@@ -48,7 +55,68 @@ TASK_DEFINITION
     cpu_architecture        = "X86_64"
   }
   tags = var.tags
+  volume {
+    name = "jupyter-notebooks-volume"
+    efs_volume_configuration {
+      file_system_id = module.efs.id 
+      root_directory = "/"
+      transit_encryption      = "ENABLED"
+      transit_encryption_port = 2049
+      authorization_config {
+             access_point_id = module.efs.access_points.root_example.id
+             iam             = "ENABLED"
+      }
+    }
+  }
 }
+
+module "efs" {
+  source = "terraform-aws-modules/efs/aws"
+  name = "jupyter-notebooks-efs"
+  security_group_vpc_id = "vpc-0b906b724eed4d2e5"
+  attach_policy = false
+  access_points = {
+    posix_example = {
+      name = "posix-example"
+      posix_user = {
+        gid            = 1001
+        uid            = 1001
+        secondary_gids = [1002]
+      }
+
+      tags = {
+        Additionl = "yes"
+      }
+    }
+    root_example = {
+      root_directory = {
+        path = "/notebooks"
+        creation_info = {
+          owner_gid   = 1001
+          owner_uid   = 1001
+          permissions = "755"
+        }
+      }
+    }
+  }
+  security_group_rules = {
+    vpc = {
+      # relying on the defaults provdied for EFS/NFS (2049/TCP + ingress)
+      description = "NFS ingress from VPC private subnets"
+      cidr_blocks = ["10.0.1.128/25", "10.0.1.0/25", "10.0.2.128/25", "10.0.2.0/25"]
+    }
+  }
+  mount_targets = {
+    "us-east-1d" = {
+      subnet_id = "subnet-00530f8a3081b0c80"
+    }
+    "us-east-1e" = {
+      subnet_id = "subnet-04987c547d672f7b8"
+    }
+    
+  }
+}
+
 
 # if group is missing, ecs will fail to start the task
 resource "aws_cloudwatch_log_group" "fargate" {
@@ -100,6 +168,11 @@ EOF
 resource "aws_iam_role_policy_attachment" "ecs-task-execution-role-policy-attachment" {
   role       = aws_iam_role.ecs_task_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "ecs-task-execution-role-policy-attachment2" {
+  role       = aws_iam_role.ecs_task_execution_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonElasticFileSystemFullAccess"
 }
 
 resource "aws_iam_role_policy_attachment" "ecs-task-execution-role-secrets-policy-attachment" {
