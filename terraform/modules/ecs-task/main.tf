@@ -35,6 +35,7 @@ resource "aws_ecs_task_definition" "backend-task" {
     "mountPoints": [
             {
               "containerPath": "/app/dev/notebooks",
+              "readOnly": false,
               "sourceVolume": "jupyter-notebooks-volume"
             }
         ],    
@@ -59,6 +60,12 @@ TASK_DEFINITION
     efs_volume_configuration {
       file_system_id = module.efs.id 
       root_directory = "/"
+      transit_encryption      = "ENABLED"
+      transit_encryption_port = 2049
+      authorization_config {
+             access_point_id = module.efs.access_points.root_example.id
+             iam             = "ENABLED"
+      }
     }
   }
 }
@@ -67,6 +74,7 @@ module "efs" {
   source = "terraform-aws-modules/efs/aws"
   name = "jupyter-notebooks-efs"
   security_group_vpc_id = "vpc-0b906b724eed4d2e5"
+  attach_policy = false
   access_points = {
     posix_example = {
       name = "posix-example"
@@ -82,7 +90,7 @@ module "efs" {
     }
     root_example = {
       root_directory = {
-        path = "/"
+        path = "/notebooks"
         creation_info = {
           owner_gid   = 1001
           owner_uid   = 1001
@@ -160,6 +168,11 @@ EOF
 resource "aws_iam_role_policy_attachment" "ecs-task-execution-role-policy-attachment" {
   role       = aws_iam_role.ecs_task_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "ecs-task-execution-role-policy-attachment2" {
+  role       = aws_iam_role.ecs_task_execution_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonElasticFileSystemFullAccess"
 }
 
 resource "aws_iam_role_policy_attachment" "ecs-task-execution-role-secrets-policy-attachment" {
