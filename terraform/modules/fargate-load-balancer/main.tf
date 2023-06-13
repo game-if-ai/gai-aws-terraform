@@ -15,7 +15,7 @@ resource "aws_lb_target_group" "jupyter_api" {
 }
 
 resource "aws_alb" "jupyter_api" {
-  name               = "jupyter-api-lb"
+  name               = "jupyter-api-lb-${var.environment}"
   internal           = false
   load_balancer_type = "application"
 
