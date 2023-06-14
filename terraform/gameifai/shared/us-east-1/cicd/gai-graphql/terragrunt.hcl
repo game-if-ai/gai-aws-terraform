@@ -1,5 +1,5 @@
 terraform {
-  source = "git@github.com:mentorpal/terraform-modules//modules/gitflow_cicd_pipeline?ref=tags/v1.6.16"
+  source = "git@github.com:mentorpal/terraform-modules//modules/gitflow_cicd_pipeline?ref=v1.6.16"
 }
 
 include {
@@ -27,8 +27,8 @@ locals {
 
 inputs = {
     codestar_connection_arn = local.codestar_connection_arn
-    project_name            = "gai-jupyter"
-    github_repo_name        = "gai-jupyter"
+    project_name            = "gai-graphql"
+    github_repo_name        = "gai-graphql"
     github_org              = "gameifai"
     github_branch_dev       = "main"
     github_branch_release   = "release"
