@@ -32,6 +32,7 @@ generate "provider" {
   contents  = <<EOF
 provider "aws" {
   region = "${local.aws_region}"
+  version = "< 5"
 # without alias aws_acm_certificate throws an error: "Provider configuration not present"
 # 
 # │ To work with data.aws_acm_certificate.cdn its original provider

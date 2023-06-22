@@ -3,4 +3,5 @@ resource "aws_ssm_parameter" "stored_var" {
   description = var.description
   type        = "String"
   value       = var.ssm_variable_value
+  overwrite   = true
 }

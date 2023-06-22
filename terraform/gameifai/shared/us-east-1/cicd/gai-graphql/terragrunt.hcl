@@ -29,7 +29,7 @@ inputs = {
     codestar_connection_arn = local.codestar_connection_arn
     project_name            = "gai-graphql"
     github_repo_name        = "gai-graphql"
-    github_org              = "gameifai"
+    github_org              = "game-if-ai"
     github_branch_dev       = "main"
     github_branch_release   = "release"
 
