@@ -7,7 +7,7 @@ include {
 }
 
 inputs = {
-  cluster_name = "ecs-gameifai-fargate"
+  cluster_name = "ecs-gameifai-fargate-dev"
   default_capacity_provider_use_fargate = true
 
   cluster_configuration = {

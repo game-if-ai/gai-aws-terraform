@@ -1,5 +1,5 @@
 terraform {
-  source = "${path_relative_from_include()}/modules//fargate-load-balancer"
+  source = "../../../../modules/backend-infrastructure"
 }
 
 include {
@@ -10,14 +10,15 @@ locals {
   region_vars = read_terragrunt_config(find_in_parent_folders("region.hcl"))
   account_vars = read_terragrunt_config(find_in_parent_folders("account.hcl"))
   env_vars = read_terragrunt_config(find_in_parent_folders("env.hcl"))
+  global_secret_vars = read_terragrunt_config(find_in_parent_folders("global_secrets.hcl"))
   aws_region   = local.region_vars.locals.aws_region
   account_id   = local.account_vars.locals.aws_account_id
-  environment  = local.env_vars.locals.environment
+  codestar_connection_arn = local.global_secret_vars.locals.codestar_connection_arn
+  env_name = local.env_vars.locals.environment
 }
 
-
 inputs = {
-  region        = local.aws_region
-  account_id    = local.account_id
-  environment   = local.environment
+    env_name = local.env_name
+    project_name = "gameifai"
+    aws_region = local.aws_region
 }

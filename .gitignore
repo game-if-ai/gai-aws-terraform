@@ -6,3 +6,4 @@
 .terraform/
 .terragrunt-cache
 *_secrets.tfvars
+/terraform/global_secrets.hcl

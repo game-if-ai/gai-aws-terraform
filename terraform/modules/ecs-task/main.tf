@@ -6,16 +6,16 @@ resource "aws_ecs_task_definition" "backend-task" {
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_role.arn
   network_mode             = "awsvpc"
-  cpu                      = "1024"
-  memory                   = "8192"  
+  cpu                      = var.cpu
+  memory                   = var.memory  
   
   container_definitions = <<TASK_DEFINITION
 [
   {
-    "name": "${var.container_name}",
+    "name": "${var.container_name}-${var.environment}",
     "image": "${var.task_name}:latest",
-    "cpu": 1024,
-    "memory": 8192,
+    "cpu": ${var.cpu},
+    "memory": ${var.memory},
     "essential": true,
     "logConfiguration": {
       "logDriver": "awslogs",
