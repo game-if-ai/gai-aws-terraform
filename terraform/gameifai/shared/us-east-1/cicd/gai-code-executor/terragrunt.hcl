@@ -34,8 +34,8 @@ inputs = {
     github_branch_release   = "release"
 
     # reference: https://github.com/cloudposse/terraform-aws-codebuild#inputs
-    build_image  = "aws/codebuild/standard:5.0"
-    deploy_image = "aws/codebuild/standard:5.0"
+    build_image  = "aws/codebuild/standard:7.0"
+    deploy_image = "aws/codebuild/standard:7.0"
     # https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-compute-types.html
     build_compute_type   = "BUILD_GENERAL1_MEDIUM"
     deploys_compute_type = "BUILD_GENERAL1_MEDIUM"
